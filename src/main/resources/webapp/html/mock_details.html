@@ -1,0 +1,181 @@
+<!doctype html>
+<html xmlns:th="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/static/icon.png">
+
+    <title>mockato</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sticky-footer-navbar/">
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Custom styles for this template -->
+    <link href="/static/custom.css" rel="stylesheet">
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">mockato</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <input id="show-domain-input" class="form-control mr-sm-2" type="search" value="Search" aria-label="Search"
+                   disabled>
+        </form>
+        <button id="new-domain" class="btn btn-outline-success my-2 my-sm-0">new domain</button>
+    </div>
+</nav>
+
+<main role="main" class="container">
+    <form>
+        <div class="form-row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="mockId">id</label>
+                    <input type="email" class="form-control" id="mockId" th:value="${mock_id}" disabled>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="path">http path</label>
+                    <input type="email" class="form-control" id="path" th:value="${mock_path}" disabled>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="method">http method</label>
+                    <input class="form-control" id="method" th:value="${mock_method}" disabled>
+                </div>
+            </div>
+        </div>
+        <div th:if="${path_params.size > 0}" class="details-param-list">
+            <h7 class="border-bottom border-gray pb-2 mb-0">detected path parameters:</h7>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item" th:each="param : ${path_params}" th:text="${param}"/>
+            </ul>
+        </div>
+
+        <div th:if="${mock_type == 'DYNAMIC'}">
+            <h7 class="border-bottom pb-2 mb-0">dynamic response definition</h7>
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="editor" th:text="${mock_dynamic_script}"></div>
+                </div>
+            </div>
+            <div class="text-center border-bottom border-gray pb-2 mb-0"></div>
+
+        </div>
+
+        <div th:if="${mock_type == 'STATIC'}" class="details-param-list">
+
+            <div class="col">
+                <div class="form-group">
+                    <label for="statusCodeId">status code</label>
+                    <input class="form-control" id="statusCodeId" th:value="${mock_static_status}" disabled>
+                </div>
+            </div>
+
+            <div th:if="${mock_static_headers.size > 0}" class="details-param-list">
+                <h7 class="border-bottom border-gray pb-2 mb-0">response headers:</h7>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item" th:each="entry : ${mock_static_headers}" th:text="${entry}"/>
+                </ul>
+            </div>
+
+            <div class="col border-top">
+                <h7 class="border-bottom pb-2 mb-0">response body</h7>
+                <div class="input-group disabled">
+                    <textarea class="form-control" th:text="${mock_static_body}"> </textarea>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <span class="text-muted">mockato</span>
+    </div>
+</footer>
+
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+<!-- Include JQUERY -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.11/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+        //COPY PASTE TO GET COOKIE FUNCTIONS
+        function setCookie(name,value,days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days*24*60*60*1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+        }
+
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0;i < ca.length;i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+            }
+            return null;
+        }
+
+        //set subdomain random id if not in the cookie already.
+        var subdomain = getCookie("random_subdomain")
+        if(subdomain == null) {
+            var timestamp = new Date().getUTCMilliseconds();
+            setCookie("random_subdomain", "sub_" + timestamp, 999)
+        }
+
+        var subdomain = getCookie("random_subdomain")
+
+        //set domain for navbar
+        $(document).ready(function() {
+            $("#show-domain-input").val(subdomain)
+        })
+        $(document).ready(function() {
+            $("#new-domain").bind("click", function() {
+                var timestamp = new Date().getUTCMilliseconds();
+                setCookie("random_subdomain", "sub_" + timestamp, 999)
+                window.location.replace("/")
+            });
+        })
+
+        //END OF COOKIE GET/SET
+
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/monokai");
+        editor.session.setMode("ace/mode/javascript");
+        editor.setReadOnly(true);
+
+</script>
+</body>
+</html>

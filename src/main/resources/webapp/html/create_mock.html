@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/static/icon.png">
+
+    <title>mockato</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sticky-footer-navbar/">
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Custom styles for this template -->
+    <link href="/static/custom.css" rel="stylesheet">
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">mockato</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <input id="show-domain-input" class="form-control mr-sm-2" type="search" value="Search" aria-label="Search"
+                   disabled>
+        </form>
+        <button id="new-domain" class="btn btn-outline-success my-2 my-sm-0">new domain</button>
+    </div>
+</nav>
+
+<main role="main" class="container">
+    <form>
+        <div class="form-row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="mockId">id</label>
+                    <input class="form-control" id="mockId">
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="path">http path</label>
+                    <input class="form-control" id="path">
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="method">http method</label>
+                    <input class="form-control" id="method">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row border-bottom pb-2 mb-0">
+            <div class="col">
+                <div class="form-group">
+                    <h7>mock type:</h7>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="mock_type" id="static_mock" value="static">
+                    <label class="form-check-label" for="static_mock">
+                        static
+                    </label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="mock_type" id="dynamic_mock" value="dynamic">
+                    <label class="form-check-label" for="dynamic_mock">
+                        dynamic
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div id="dynamic-details" style="display: none;">
+            <h7 class="border-bottom pb-2 mb-0">dynamic response definition</h7>
+
+            <div class="alert alert-info" role="alert">
+                path parameters defined in path mock, can be accessed in script via params variable accessible in
+                context.
+                For example:
+                <pre class="pre-inside-alert">
+var nameParam = params["name"]
+                        </pre>
+                To set status code, params and body, follow sample script defined below.
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="editor">var headers = {
+                        header1: params["key"],
+                        header2: params["value"]
+                        };
+                        var body = 'its ok';
+                        //return statement
+                        ({ statusCode : 200, body : params, headers : headers })
+                    </div>
+                </div>
+            </div>
+            <div class="text-center border-bottom border-gray pb-2 mb-0"></div>
+        </div>
+
+
+        <div id="static-details" style="display: none;">
+            <h7 class="border-bottom pb-2 mb-0">static response definition</h7>
+
+            <div class="form-group">
+                <label for="responseBody">response body</label>
+                <textarea class="form-control" id="responseBody" rows="5"></textarea>
+            </div>
+
+            <div class="form-group" style="width: 20%">
+                <label for="statusCode">status code</label>
+                <input class="form-control" id="statusCode">
+            </div>
+
+            <h7 class="border-bottom pb-2 mb-0">response headers</h7>
+
+            <svg id="id-add-header" class="bi bi-plus-circle" width="1em" height="1em" viewBox="0 0 16 16"
+                 fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M8 3.5a.5.5 0 01.5.5v4a.5.5 0 01-.5.5H4a.5.5 0 010-1h3.5V4a.5.5 0 01.5-.5z"
+                      clip-rule="evenodd"/>
+                <path fill-rule="evenodd" d="M7.5 8a.5.5 0 01.5-.5h4a.5.5 0 010 1H8.5V12a.5.5 0 01-1 0V8z"
+                      clip-rule="evenodd"/>
+                <path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
+                      clip-rule="evenodd"/>
+            </svg>
+
+            <div id="headers-container">
+                <div class="input-group margin-bottom">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">pair1</span>
+                    </div>
+                    <input type="text" name="header-key" class="form-control header-key">
+                    <input type="text" name="header-value" class="form-control header-value">
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="form-row pb-2 mb-0" style="margin-top: 20px;">
+        <button class="btn btn-primary" id="create-mock" href="#">create</button>
+    </div>
+
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <span class="text-muted">mockato</span>
+    </div>
+</footer>
+
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+<!-- Include JQUERY -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.11/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+        //COPY PASTE TO GET COOKIE FUNCTIONS
+        function setCookie(name,value,days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days*24*60*60*1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+        }
+
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0;i < ca.length;i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+            }
+            return null;
+        }
+
+        //set subdomain random id if not in the cookie already.
+        var subdomain = getCookie("random_subdomain")
+        if(subdomain == null) {
+            var timestamp = new Date().getUTCMilliseconds();
+            setCookie("random_subdomain", "sub_" + timestamp, 999)
+        }
+
+        var subdomain = getCookie("random_subdomain")
+
+        //set domain for navbar
+        $(document).ready(function() {
+            $("#show-domain-input").val(subdomain)
+        })
+        $(document).ready(function() {
+            $("#new-domain").bind("click", function() {
+                var timestamp = new Date().getUTCMilliseconds();
+                setCookie("random_subdomain", "sub_" + timestamp, 999)
+                window.location.replace("/")
+            });
+        })
+
+        //END OF COOKIE GET/SET
+
+
+        //don't try to understand that.
+        var nextHeader = 2;
+
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/monokai");
+        editor.session.setMode("ace/mode/javascript");
+
+        $(document).ready(function() {
+            $("#static_mock").bind("click", function() {
+                $("#dynamic-details").hide();
+                $("#static-details").show();
+            });
+
+            $("#dynamic_mock").bind("click", function() {
+                $("#dynamic-details").show();
+                $("#static-details").hide();
+            });
+
+            $("#create-mock").bind("click", function() {
+
+                var finalRequest = {};
+
+                var mockId = $( "#mockId" ).val();
+
+                var path = $( "#path" ).val();
+                finalRequest["path"] = path;
+
+                var method = $( "#method" ).val();
+                finalRequest["method"] = method;
+
+                var mockType = $("input[name=mock_type]:checked").val();
+
+                var responseDefinition = {}
+
+                finalRequest["responseDefinition"] = responseDefinition;
+
+                console.log(mockType);
+
+                if(mockType == 'dynamic') {
+                    responseDefinition["type"] = "DYNAMIC";
+                    var dynamicResponse = {}
+                    var scriptCode = editor.getValue();
+
+                    dynamicResponse["script"] = scriptCode;
+
+                    responseDefinition["dynamicResponse"] = dynamicResponse;
+
+                    console.log(finalRequest);
+                } else {
+                    responseDefinition["type"] = "STATIC";
+                    var staticResponse = {}
+
+                    var statusCode = $( "#statusCode" ).val();
+                    staticResponse["statusCode"] = statusCode;
+
+                    var responseBody = $( "#responseBody" ).val();
+                    staticResponse["body"] = responseBody;
+
+                    //iterate over headers
+                    var headers = {};
+
+                    $('#headers-container').children().each( (index, element) => {
+                        var key = $(element).find("input[name='header-key']").val();
+                        var value = $(element).find("input[name='header-value']").val();
+                        headers[key] = value;
+                     });
+
+                    staticResponse["headers"] = headers;
+
+                    responseDefinition["staticResponse"] = staticResponse;
+                }
+
+
+                $.ajax({
+                    type: 'POST',
+                    data: JSON.stringify(finalRequest),
+                    url: "/api/subdomains/"+subdomain+"/mock/" + mockId,
+                    success: function (data) {
+                        window.location.replace("/" + subdomain +"/" + mockId)
+                    }
+                });
+
+
+            });
+
+            $("#id-add-header").bind("click", function() {
+
+                var html =`
+                    <div class="input-group margin-bottom">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">pair${nextHeader}</span>
+                        </div>
+                        <input type="text" name="header-key" class="form-control header-key">
+                        <input type="text" name="header-value" class="form-control header-value">
+                    </div>`;
+
+                $('#headers-container').append(html);
+
+                nextHeader = nextHeader + 1;
+            });
+        });
+
+
+</script>
+</body>
+</html>
