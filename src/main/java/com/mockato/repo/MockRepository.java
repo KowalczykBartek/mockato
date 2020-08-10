@@ -23,12 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Expose API to query database. Postgres is king
+ * Expose API to query database. Postgres is a king
  * <p>
  * yes yes i know
  * CREATE INDEX ON mocks (subdomain);
  * CREATE UNIQUE INDEX idx_uniq_sobdomain_mock_id ON mocks(subdomain, mock_id);
  * CREATE TABLE IF NOT EXISTS mocks (subdomain varchar(40), mock_id varchar(40), definition JSONB );
+ * </p>
  */
 public class MockRepository {
 
@@ -78,9 +79,7 @@ public class MockRepository {
      * @return
      */
     public Future<List<JsonObject>> getAllMocks(String subdomain) {
-
         Promise<List<JsonObject>> promise = Promise.promise();
-
         /*
          * TODO FIXME there is need for PAGING
          */
@@ -116,7 +115,6 @@ public class MockRepository {
      */
     public Future<Void> createMock(String subdomain, String definitionId, JsonObject jsonObject) {
         Promise promise = Promise.promise();
-
         client.preparedQuery("INSERT INTO mocks(subdomain, mock_id, definition) VALUES ($1, $2, $3)")
                 .execute(Tuple.of(subdomain, definitionId, jsonObject), ar -> {
                     if (ar.succeeded()) {
@@ -139,7 +137,6 @@ public class MockRepository {
      */
     public Future<List<MatchPattern>> getAllMockedPathsForSubdomain(String subdomain, String method) {
         Promise promise = Promise.promise();
-
         client.preparedQuery("SELECT mock_id, definition->>'path', definition->>'pattern', definition->>'groups' FROM mocks WHERE subdomain=$1 AND definition->>'method' = $2;")
                 .execute(Tuple.of(subdomain, method), ar -> {
                     if (ar.succeeded()) {
@@ -170,7 +167,6 @@ public class MockRepository {
 
     public Future<Pair<MockDefinition, PatternDetails>> getMockDetails(String subdomain, String mockId) {
         Promise<Pair<MockDefinition, PatternDetails>> promise = Promise.promise();
-
         client.preparedQuery("SELECT definition FROM mocks WHERE subdomain = $1 and mock_id = $2 LIMIT 1;")
                 .execute(Tuple.of(subdomain, mockId), ar -> {
                     if (ar.succeeded()) {

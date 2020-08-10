@@ -36,6 +36,7 @@ public class CreateMockDefinitionHandler implements Handler<RoutingContext> {
             MockDefinition definition = jsonObject.mapTo(MockDefinition.class);
 
             if (!isDefinitionValid(definition)) {
+                //FIXME message
                 response.setStatusCode(400).end();
                 return;
             }
@@ -62,6 +63,8 @@ public class CreateMockDefinitionHandler implements Handler<RoutingContext> {
         if (responseDefinition.getStaticResponse() != null && responseDefinition.getDynamicResponse() != null) {
             isCorrect = false;
         }
+
+        //FIXME
 
         if (MockType.DYNAMIC.equals(responseDefinition.getType())) {
 

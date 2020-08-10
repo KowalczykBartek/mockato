@@ -45,11 +45,11 @@ public class DetectSubdomainRequestHandler implements Handler<RoutingContext> {
         LOGGER.info("After parsing host header = {}", host);
 
         if (host.contains(domain)) {
-            final String subdomain = plainHost.split(domain)[0];
+            String subdomain = plainHost.split(domain)[0];
             LOGGER.info("Executing mock request against subdomain {}", host);
 
             //here, we are in case when someone calls us from subdomain
-            executor.respondToRequestWithMock(event.request(), subdomain)
+            executor.respondToRequestWithMock(subdomain, event.request().method(), event.request().path())
                     .onComplete(res -> {
                         if (res.succeeded()) {
                             ResponseContainer responseContainer = res.result();
@@ -76,7 +76,7 @@ public class DetectSubdomainRequestHandler implements Handler<RoutingContext> {
     /**
      * Remove prefix(all prefixes) from received domain, I expect that
      * <pre>
-     *   http://subdomain.domain.com
+     *   https://subdomain.domain.com
      *   http://www.subdomain.domain.com
      *   www.subdomain.domain.com
      *   subdomain.domain.com

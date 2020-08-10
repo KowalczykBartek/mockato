@@ -1,11 +1,12 @@
 package com.mockato;
 
+import com.mockato.codeExecution.JavasScriptEngine;
 import com.mockato.handlers.*;
-import com.mockato.js.JavasScriptEngine;
 import com.mockato.repo.MockRepository;
 import com.mockato.service.ConfigurationService;
 import com.mockato.service.MockExecutionService;
 import com.mockato.service.MockService;
+import com.mockato.service.PathParserService;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
@@ -25,6 +26,8 @@ public class Main {
 
     public static void main(final String... args) {
 
+        LOGGER.info("Starting mockato ...");
+
         ConfigurationService configurationService = new ConfigurationService(System.getenv());
 
         Vertx vertx = Vertx.vertx();
@@ -32,8 +35,9 @@ public class Main {
 
         JavasScriptEngine javasScriptEngine = new JavasScriptEngine();
         MockRepository mockRepository = new MockRepository(configurationService);
-        MockExecutionService executor = new MockExecutionService(mockRepository, javasScriptEngine);
-        MockService mockService = new MockService(mockRepository);
+        PathParserService pathParserService = new PathParserService();
+        MockExecutionService executor = new MockExecutionService(mockRepository, javasScriptEngine, pathParserService);
+        MockService mockService = new MockService(mockRepository, pathParserService);
 
         Router router = Router.router(vertx);
 

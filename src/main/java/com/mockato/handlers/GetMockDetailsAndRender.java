@@ -62,6 +62,7 @@ public class GetMockDetailsAndRender implements Handler<RoutingContext> {
                                 map.put("mock_static_body", staticResponse.getBody());
                             }
 
+                            //fixme into future compose
                             engine.render(map, "webapp/html/mock_details.html", res -> {
                                 if (res.succeeded()) {
                                     event.response().end(res.result());
