@@ -3,6 +3,7 @@ package com.mockato.handlers;
 import com.mockato.exceptions.NotFoundException;
 import com.mockato.model.*;
 import com.mockato.service.MockService;
+import com.mockato.utils.CurlCommandParser;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
@@ -18,10 +19,12 @@ import java.util.List;
 public class GetMockDetailsAndRender implements Handler<RoutingContext> {
     private final MockService mockService;
     private final ThymeleafTemplateEngine engine;
+    private final CurlCommandParser curlCommandParser;
 
-    public GetMockDetailsAndRender(MockService mockService, ThymeleafTemplateEngine engine) {
+    public GetMockDetailsAndRender(MockService mockService, ThymeleafTemplateEngine engine, CurlCommandParser curlCommandParser) {
         this.mockService = mockService;
         this.engine = engine;
+        this.curlCommandParser = curlCommandParser;
     }
 
     @Override
@@ -33,9 +36,7 @@ public class GetMockDetailsAndRender implements Handler<RoutingContext> {
 
         mockService.getMockDetails(subdomain, mockId)
                 .onComplete(result -> {
-
                     if (result.succeeded()) {
-
                         try {
                             Pair<MockDefinition, PatternDetails> details = result.result();
                             MockDefinition definition = details.getLeft();
@@ -62,7 +63,9 @@ public class GetMockDetailsAndRender implements Handler<RoutingContext> {
                                 map.put("mock_static_body", staticResponse.getBody());
                             }
 
-                            //fixme into future compose
+                            String curlForUser = curlCommandParser.generateCurlCommandForFrontend(definition, subdomain);
+                            map.put("curl_command", curlForUser);
+
                             engine.render(map, "webapp/html/mock_details.html", res -> {
                                 if (res.succeeded()) {
                                     event.response().end(res.result());
@@ -72,17 +75,14 @@ public class GetMockDetailsAndRender implements Handler<RoutingContext> {
                             });
 
                         } catch (Exception ex) {
-                            String internalErrorFound = ResponseUtils.responseFromException(ex.getCause());
-                            event.response().setStatusCode(500).end(internalErrorFound);
+                            ResponseUtils.responseFromException(event.response(), ex.getCause());
                         }
 
                     } else {
                         if (result.cause() instanceof NotFoundException) {
-                            String notFoundResponse = ResponseUtils.responseForNotFoundCase();
-                            event.response().setStatusCode(404).end(notFoundResponse);
+                            ResponseUtils.responseForNotFoundCase(event.response());
                         } else {
-                            String internalErrorFound = ResponseUtils.responseFromException(result.cause());
-                            event.response().setStatusCode(500).end(internalErrorFound);
+                            ResponseUtils.responseFromException(event.response(), result.cause());
                         }
                     }
 

@@ -62,3 +62,7 @@ code {
 }
 
 .bi-trash-fill:hover {color: #007bff;;}
+
+.custom-jumbotron {
+    padding: 1rem 1rem;
+}

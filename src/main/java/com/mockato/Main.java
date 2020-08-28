@@ -7,6 +7,7 @@ import com.mockato.service.ConfigurationService;
 import com.mockato.service.MockExecutionService;
 import com.mockato.service.MockService;
 import com.mockato.service.PathParserService;
+import com.mockato.utils.CurlCommandParser;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
@@ -39,12 +40,15 @@ public class Main {
         MockExecutionService executor = new MockExecutionService(mockRepository, javasScriptEngine, pathParserService);
         MockService mockService = new MockService(mockRepository, pathParserService);
 
+        CurlCommandParser curlCommandParser = new CurlCommandParser(configurationService.getDomain());
+
         Router router = Router.router(vertx);
 
         DetectSubdomainRequestHandler detectSubdomainRequestHandler = new DetectSubdomainRequestHandler(configurationService, executor);
         router.route().handler(detectSubdomainRequestHandler);
 
         BodyHandlerImpl bodyHandler = new BodyHandlerImpl();
+        bodyHandler.setBodyLimit(1024); //1kb as limit, because why not
 
         //API
         GetAllMocks getAllMocksHandler = new GetAllMocks(mockService);
@@ -56,7 +60,6 @@ public class Main {
         DeleteMockHandler deleteMockHandler = new DeleteMockHandler(mockService);
         router.delete("/api/subdomains/:subdomain/mock/:mockId").handler(deleteMockHandler);
 
-
         //HTML/UI handler
         ThymeleafTemplateEngine engine = ThymeleafTemplateEngine.create(vertx);
         router.route("/static/*").handler(StaticHandler.create("webapp/static"));
@@ -64,12 +67,11 @@ public class Main {
         RenderCreateMockPage createMock = new RenderCreateMockPage(mockService, engine);
         router.route(HttpMethod.GET, "/newMock/:subdomain/create").handler(createMock);
 
-        GetMockDetailsAndRender getMockDetailsAndRender = new GetMockDetailsAndRender(mockService, engine);
+        GetMockDetailsAndRender getMockDetailsAndRender = new GetMockDetailsAndRender(mockService, engine, curlCommandParser);
         router.route(HttpMethod.GET, "/:subdomain/:mockId").handler(getMockDetailsAndRender);
 
         RenderIndexPageHandler renderIndexPageHandler = new RenderIndexPageHandler(engine);
         router.route(HttpMethod.GET, "/").handler(renderIndexPageHandler);
-
 
         //FIXME it should work as deployed verticles to manage threads.
         server.requestHandler(router).listen(configurationService.getHttpListenPort());

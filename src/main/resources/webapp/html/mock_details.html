@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <!-- Custom styles for this template -->
     <link href="/static/custom.css" rel="stylesheet">
 </head>
 
@@ -40,6 +39,16 @@
 
 <main role="main" class="container">
     <form>
+
+        <div class="alert alert-light" role="alert">
+            <p>
+                <p>You can use following command to test your mock</p>
+                <pre th:text="${curl_command}"></pre>
+                <p>remember to replace your query params if you have them</p>
+            </p>
+        </div>
+
+
         <div class="form-row">
             <div class="col">
                 <div class="form-group">
@@ -125,57 +134,17 @@
 <!-- Include JQUERY -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.11/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/script.js"></script>
 <script>
-        //COPY PASTE TO GET COOKIE FUNCTIONS
-        function setCookie(name,value,days) {
-            var expires = "";
-            if (days) {
-                var date = new Date();
-                date.setTime(date.getTime() + (days*24*60*60*1000));
-                expires = "; expires=" + date.toUTCString();
-            }
-            document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+    $(document).ready(function() {
+        if ($('#editor').length){
+            var editor = ace.edit("editor");
+            editor.setTheme("ace/theme/monokai");
+            editor.session.setMode("ace/mode/javascript");
+            editor.setReadOnly(true);
         }
 
-        function getCookie(name) {
-            var nameEQ = name + "=";
-            var ca = document.cookie.split(';');
-            for(var i=0;i < ca.length;i++) {
-                var c = ca[i];
-                while (c.charAt(0)==' ') c = c.substring(1,c.length);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-            }
-            return null;
-        }
-
-        //set subdomain random id if not in the cookie already.
-        var subdomain = getCookie("random_subdomain")
-        if(subdomain == null) {
-            var timestamp = new Date().getUTCMilliseconds();
-            setCookie("random_subdomain", "sub_" + timestamp, 999)
-        }
-
-        var subdomain = getCookie("random_subdomain")
-
-        //set domain for navbar
-        $(document).ready(function() {
-            $("#show-domain-input").val(subdomain)
-        })
-        $(document).ready(function() {
-            $("#new-domain").bind("click", function() {
-                var timestamp = new Date().getUTCMilliseconds();
-                setCookie("random_subdomain", "sub_" + timestamp, 999)
-                window.location.replace("/")
-            });
-        })
-
-        //END OF COOKIE GET/SET
-
-        var editor = ace.edit("editor");
-        editor.setTheme("ace/theme/monokai");
-        editor.session.setMode("ace/mode/javascript");
-        editor.setReadOnly(true);
-
+    });
 </script>
 </body>
 </html>

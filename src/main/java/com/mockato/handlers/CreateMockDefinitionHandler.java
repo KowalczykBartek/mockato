@@ -1,7 +1,6 @@
 package com.mockato.handlers;
 
 import com.mockato.model.MockDefinition;
-import com.mockato.model.MockType;
 import com.mockato.model.ResponseDefinition;
 import com.mockato.service.MockService;
 import io.vertx.core.Handler;
@@ -25,6 +24,7 @@ public class CreateMockDefinitionHandler implements Handler<RoutingContext> {
 
     @Override
     public void handle(RoutingContext routingContext) {
+        //FIXME some validation is required
         HttpServerResponse response = routingContext.response();
         String subdomain = routingContext.pathParam("subdomain");
         String mockId = routingContext.pathParam("mockId");
@@ -51,7 +51,7 @@ public class CreateMockDefinitionHandler implements Handler<RoutingContext> {
                     });
 
         } catch (Exception ex) {
-            response.setStatusCode(500).end(ResponseUtils.responseFromException(ex.getCause()));
+            ResponseUtils.responseFromException(response, ex.getCause());
         }
     }
 
@@ -62,14 +62,6 @@ public class CreateMockDefinitionHandler implements Handler<RoutingContext> {
 
         if (responseDefinition.getStaticResponse() != null && responseDefinition.getDynamicResponse() != null) {
             isCorrect = false;
-        }
-
-        //FIXME
-
-        if (MockType.DYNAMIC.equals(responseDefinition.getType())) {
-
-        } else {
-
         }
 
         return isCorrect;

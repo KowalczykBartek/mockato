@@ -40,10 +40,10 @@ public class GetAllMocks implements Handler<RoutingContext> {
                             String encodedResponse = Json.encode(allMocks);
                             response.setStatusCode(200).end(encodedResponse);
                         } catch (EncodeException ex) {
-                            response.setStatusCode(500).end(ResponseUtils.responseFromException(result.cause()));
+                            ResponseUtils.responseFromException(response, result.cause());
                         }
                     } else {
-                        response.setStatusCode(500).end(ResponseUtils.responseFromException(result.cause()));
+                        ResponseUtils.responseFromException(response, result.cause());
                     }
                 });
     }

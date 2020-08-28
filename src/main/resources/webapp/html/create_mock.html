@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <!-- Custom styles for this template -->
     <link href="/static/custom.css" rel="stylesheet">
 </head>
 
@@ -56,7 +55,14 @@
             <div class="col">
                 <div class="form-group">
                     <label for="method">http method</label>
-                    <input class="form-control" id="method">
+                    <select class="custom-select" id="method">
+                        <option selected>Choose...</option>
+                        <option>POST</option>
+                        <option>GET</option>
+                        <option>DELETE</option>
+                        <option>PUT</option>
+                        <option>HEAD</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -101,12 +107,12 @@ var nameParam = params["name"]
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div id="editor">var headers = {
-                        header1: params["key"],
-                        header2: params["value"]
-                        };
-                        var body = 'its ok';
-                        //return statement
-                        ({ statusCode : 200, body : params, headers : headers })
+    header1: params["key"],
+    header2: params["value"]
+};
+var body = 'its ok';
+//return statement
+({ statusCode : 200, body : params, headers : headers })
                     </div>
                 </div>
             </div>
@@ -117,9 +123,14 @@ var nameParam = params["name"]
         <div id="static-details" style="display: none;">
             <h7 class="border-bottom pb-2 mb-0">static response definition</h7>
 
+            <div class="alert alert-info" role="alert">
+                static definition is just set of parameters (like status code and body),
+                constantly returned by your http mock.
+            </div>
+
             <div class="form-group">
                 <label for="responseBody">response body</label>
-                <textarea class="form-control" id="responseBody" rows="5"></textarea>
+                <textarea class="form-control" id="responseBody" rows="6"></textarea>
             </div>
 
             <div class="form-group" style="width: 20%">
@@ -175,154 +186,109 @@ var nameParam = params["name"]
 <!-- Include JQUERY -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.11/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/script.js"></script>
 <script>
-        //COPY PASTE TO GET COOKIE FUNCTIONS
-        function setCookie(name,value,days) {
-            var expires = "";
-            if (days) {
-                var date = new Date();
-                date.setTime(date.getTime() + (days*24*60*60*1000));
-                expires = "; expires=" + date.toUTCString();
-            }
-            document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-        }
+    //don't try to understand that.
+    var nextHeader = 2;
 
-        function getCookie(name) {
-            var nameEQ = name + "=";
-            var ca = document.cookie.split(';');
-            for(var i=0;i < ca.length;i++) {
-                var c = ca[i];
-                while (c.charAt(0)==' ') c = c.substring(1,c.length);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-            }
-            return null;
-        }
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.session.setMode("ace/mode/javascript");
 
-        //set subdomain random id if not in the cookie already.
-        var subdomain = getCookie("random_subdomain")
-        if(subdomain == null) {
-            var timestamp = new Date().getUTCMilliseconds();
-            setCookie("random_subdomain", "sub_" + timestamp, 999)
-        }
-
-        var subdomain = getCookie("random_subdomain")
-
-        //set domain for navbar
-        $(document).ready(function() {
-            $("#show-domain-input").val(subdomain)
-        })
-        $(document).ready(function() {
-            $("#new-domain").bind("click", function() {
-                var timestamp = new Date().getUTCMilliseconds();
-                setCookie("random_subdomain", "sub_" + timestamp, 999)
-                window.location.replace("/")
-            });
-        })
-
-        //END OF COOKIE GET/SET
-
-
-        //don't try to understand that.
-        var nextHeader = 2;
-
-        var editor = ace.edit("editor");
-        editor.setTheme("ace/theme/monokai");
-        editor.session.setMode("ace/mode/javascript");
-
-        $(document).ready(function() {
-            $("#static_mock").bind("click", function() {
-                $("#dynamic-details").hide();
-                $("#static-details").show();
-            });
-
-            $("#dynamic_mock").bind("click", function() {
-                $("#dynamic-details").show();
-                $("#static-details").hide();
-            });
-
-            $("#create-mock").bind("click", function() {
-
-                var finalRequest = {};
-
-                var mockId = $( "#mockId" ).val();
-
-                var path = $( "#path" ).val();
-                finalRequest["path"] = path;
-
-                var method = $( "#method" ).val();
-                finalRequest["method"] = method;
-
-                var mockType = $("input[name=mock_type]:checked").val();
-
-                var responseDefinition = {}
-
-                finalRequest["responseDefinition"] = responseDefinition;
-
-                console.log(mockType);
-
-                if(mockType == 'dynamic') {
-                    responseDefinition["type"] = "DYNAMIC";
-                    var dynamicResponse = {}
-                    var scriptCode = editor.getValue();
-
-                    dynamicResponse["script"] = scriptCode;
-
-                    responseDefinition["dynamicResponse"] = dynamicResponse;
-
-                    console.log(finalRequest);
-                } else {
-                    responseDefinition["type"] = "STATIC";
-                    var staticResponse = {}
-
-                    var statusCode = $( "#statusCode" ).val();
-                    staticResponse["statusCode"] = statusCode;
-
-                    var responseBody = $( "#responseBody" ).val();
-                    staticResponse["body"] = responseBody;
-
-                    //iterate over headers
-                    var headers = {};
-
-                    $('#headers-container').children().each( (index, element) => {
-                        var key = $(element).find("input[name='header-key']").val();
-                        var value = $(element).find("input[name='header-value']").val();
-                        headers[key] = value;
-                     });
-
-                    staticResponse["headers"] = headers;
-
-                    responseDefinition["staticResponse"] = staticResponse;
-                }
-
-
-                $.ajax({
-                    type: 'POST',
-                    data: JSON.stringify(finalRequest),
-                    url: "/api/subdomains/"+subdomain+"/mock/" + mockId,
-                    success: function (data) {
-                        window.location.replace("/" + subdomain +"/" + mockId)
-                    }
-                });
-
-
-            });
-
-            $("#id-add-header").bind("click", function() {
-
-                var html =`
-                    <div class="input-group margin-bottom">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">pair${nextHeader}</span>
-                        </div>
-                        <input type="text" name="header-key" class="form-control header-key">
-                        <input type="text" name="header-value" class="form-control header-value">
-                    </div>`;
-
-                $('#headers-container').append(html);
-
-                nextHeader = nextHeader + 1;
-            });
+    $(document).ready(function() {
+        $("#static_mock").bind("click", function() {
+            $("#dynamic-details").hide();
+            $("#static-details").show();
         });
+
+        $("#dynamic_mock").bind("click", function() {
+            $("#dynamic-details").show();
+            $("#static-details").hide();
+        });
+
+        $("#create-mock").bind("click", function() {
+
+            var finalRequest = {};
+
+            var mockId = $( "#mockId" ).val();
+
+            var path = $( "#path" ).val();
+            finalRequest["path"] = path;
+
+            var method = $( "#method" ).val();
+            finalRequest["method"] = method;
+
+            var mockType = $("input[name=mock_type]:checked").val();
+
+            var responseDefinition = {}
+
+            finalRequest["responseDefinition"] = responseDefinition;
+
+            console.log(mockType);
+
+            if(mockType == 'dynamic') {
+                responseDefinition["type"] = "DYNAMIC";
+                var dynamicResponse = {}
+                var scriptCode = editor.getValue();
+
+                dynamicResponse["script"] = scriptCode;
+
+                responseDefinition["dynamicResponse"] = dynamicResponse;
+
+                console.log(finalRequest);
+            } else {
+                responseDefinition["type"] = "STATIC";
+                var staticResponse = {}
+
+                var statusCode = $( "#statusCode" ).val();
+                staticResponse["statusCode"] = statusCode;
+
+                var responseBody = $( "#responseBody" ).val();
+                staticResponse["body"] = responseBody;
+
+                //iterate over headers
+                var headers = {};
+
+                $('#headers-container').children().each( (index, element) => {
+                    var key = $(element).find("input[name='header-key']").val();
+                    var value = $(element).find("input[name='header-value']").val();
+                    headers[key] = value;
+                 });
+
+                staticResponse["headers"] = headers;
+
+                responseDefinition["staticResponse"] = staticResponse;
+            }
+
+
+            $.ajax({
+                type: 'POST',
+                data: JSON.stringify(finalRequest),
+                url: "/api/subdomains/"+subdomain+"/mock/" + mockId,
+                success: function (data) {
+                    window.location.replace("/" + subdomain +"/" + mockId)
+                }
+            });
+
+
+        });
+
+        $("#id-add-header").bind("click", function() {
+
+            var html =`
+                <div class="input-group margin-bottom">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">pair${nextHeader}</span>
+                    </div>
+                    <input type="text" name="header-key" class="form-control header-key">
+                    <input type="text" name="header-value" class="form-control header-value">
+                </div>`;
+
+            $('#headers-container').append(html);
+
+            nextHeader = nextHeader + 1;
+        });
+    });
 
 
 </script>
