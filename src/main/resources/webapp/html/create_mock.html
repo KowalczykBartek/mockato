@@ -91,8 +91,15 @@
             </div>
         </div>
 
+
         <div id="dynamic-details" style="display: none;">
+
             <h7 class="border-bottom pb-2 mb-0">dynamic response definition</h7>
+
+            <div class="alert alert-warning" role="alert">
+                <p style="float: left;"><img src="/static/drudgesiren.gif" height="50px" width="50px"/></p>
+                <p>pls do not create infinite loops or long running scripts - there is no resource exhaustion protection</p>
+            </div>
 
             <div class="alert alert-info" role="alert">
                 path parameters defined in path mock, can be accessed in script via params variable accessible in
@@ -101,7 +108,7 @@
                 <pre class="pre-inside-alert">
 var nameParam = params["name"]
                         </pre>
-                To set status code, params and body, follow sample script defined below.
+                To set status code, headers and body, follow sample script defined below.
             </div>
 
             <div class="panel panel-default">
