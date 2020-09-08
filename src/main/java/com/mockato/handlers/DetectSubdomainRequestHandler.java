@@ -1,6 +1,5 @@
 package com.mockato.handlers;
 
-import com.mockato.exceptions.NotFoundException;
 import com.mockato.model.ResponseContainer;
 import com.mockato.service.ConfigurationService;
 import com.mockato.service.MockExecutionService;
@@ -18,11 +17,13 @@ public class DetectSubdomainRequestHandler implements Handler<RoutingContext> {
 
     //domain (address) of application.
     private final String domain;
+    private final String wwwHostCase;
 
     public DetectSubdomainRequestHandler(ConfigurationService configurationService, MockExecutionService executor) {
         this.configurationService = configurationService;
         this.executor = executor;
         this.domain = configurationService.getDomain();
+        this.wwwHostCase = getWwwHost(domain);
     }
 
     @Override
@@ -44,7 +45,7 @@ public class DetectSubdomainRequestHandler implements Handler<RoutingContext> {
         String plainHost = toPlainHost(host);
         LOGGER.info("After parsing host header = {}", host);
 
-        if (host.contains(domain)) {
+        if (host.contains(domain) && !host.contains(wwwHostCase)) {
             String subdomain = plainHost.split(domain)[0];
             LOGGER.info("Executing mock request against subdomain {}", host);
 
@@ -59,12 +60,7 @@ public class DetectSubdomainRequestHandler implements Handler<RoutingContext> {
                             event.response().setStatusCode(responseContainer.getStatusCode())
                                     .end(responseContainer.getBody());
                         } else {
-                            Throwable throwable = res.cause();
-                            if (throwable instanceof NotFoundException) {
-                                event.response().setStatusCode(404).end();
-                            } else {
-                                event.response().setStatusCode(500).end();
-                            }
+                            ResponseUtils.responseFromException(event.response(), res.cause());
                         }
                     });
 
@@ -78,14 +74,19 @@ public class DetectSubdomainRequestHandler implements Handler<RoutingContext> {
      * <pre>
      *   https://subdomain.domain.com
      *   http://www.subdomain.domain.com
-     *   www.subdomain.domain.com
      *   subdomain.domain.com
      * </pre>
      * results in the same subdomain.domain.com string.
      */
     private String toPlainHost(String host) {
         return host.replaceAll("https://", "")
-                .replaceAll("http://", "")
-                .replaceAll("www\\.", "");
+                .replaceAll("http://", "");
+    }
+
+    /*
+     * We need to handle case when host = www.somedomain.com,
+     */
+    private String getWwwHost(String domain) {
+        return "www" + domain;
     }
 }

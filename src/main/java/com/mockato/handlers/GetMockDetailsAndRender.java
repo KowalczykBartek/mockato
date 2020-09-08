@@ -80,7 +80,6 @@ public class GetMockDetailsAndRender implements Handler<RoutingContext> {
                     } else {
                         ResponseUtils.responseFromException(event.response(), result.cause());
                     }
-
                 });
     }
 }
