@@ -1,7 +1,6 @@
 package com.mockato.handlers;
 
 import com.mockato.model.MockDefinition;
-import com.mockato.model.ResponseDefinition;
 import com.mockato.service.MockService;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpServerResponse;
@@ -29,41 +28,27 @@ public class CreateMockDefinitionHandler implements Handler<RoutingContext> {
         String subdomain = routingContext.pathParam("subdomain");
         String mockId = routingContext.pathParam("mockId");
 
+        MockDefinition definition = null;
+
         try {
             JsonObject jsonObject = routingContext.getBodyAsJson();
             LOGGER.info("Request to create new mock definition {} {} {}", subdomain, mockId, jsonObject);
 
-            MockDefinition definition = jsonObject.mapTo(MockDefinition.class);
-
-            if (!isDefinitionValid(definition)) {
-                //FIXME message
-                response.setStatusCode(400).end();
-                return;
-            }
-
-            mockService.saveMock(subdomain, mockId, definition)
-                    .onComplete(res -> {
-                        if (res.succeeded()) {
-                            response.end("{\"mockId\" : " + mockId + "}");
-                        } else {
-                            response.setStatusCode(500).end();
-                        }
-                    });
+            definition = jsonObject.mapTo(MockDefinition.class);
 
         } catch (Exception ex) {
-            ResponseUtils.responseFromException(response, ex.getCause());
-        }
-    }
-
-    private boolean isDefinitionValid(MockDefinition definition) {
-        boolean isCorrect = true;
-
-        ResponseDefinition responseDefinition = definition.getResponseDefinition();
-
-        if (responseDefinition.getStaticResponse() != null && responseDefinition.getDynamicResponse() != null) {
-            isCorrect = false;
+            LOGGER.error("Unable to parse body - bad request for {}", routingContext.getBodyAsString());
+            ResponseUtils.responseFromException(response, ex);
+            return;
         }
 
-        return isCorrect;
+        mockService.saveMock(subdomain, mockId, definition)
+                .onComplete(res -> {
+                    if (res.succeeded()) {
+                        response.end("{\"mockId\" : " + mockId + "}");
+                    } else {
+                        ResponseUtils.responseFromException(response, res.cause());
+                    }
+                });
     }
 }

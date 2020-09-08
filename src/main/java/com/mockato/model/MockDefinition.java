@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Preconditions;
 import io.vertx.core.http.HttpMethod;
 
 import java.util.Objects;
@@ -17,9 +18,18 @@ public class MockDefinition {
 
     @JsonCreator
     public MockDefinition(@JsonProperty("path") String path, @JsonProperty("method") HttpMethod method, @JsonProperty("responseDefinition") ResponseDefinition responseDefinition) {
-        this.path = path;
+        Preconditions.checkState(path != null);
+        this.path = ensureBackslesh(path);
         this.method = method;
         this.responseDefinition = responseDefinition;
+    }
+
+    private String ensureBackslesh(String path) {
+        if (path.startsWith("/")) {
+            return path;
+        } else {
+            return "/" + path;
+        }
     }
 
     public String getPath() {

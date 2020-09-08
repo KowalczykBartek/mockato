@@ -86,6 +86,6 @@ public class DetectSubdomainRequestHandler implements Handler<RoutingContext> {
     private String toPlainHost(String host) {
         return host.replaceAll("https://", "")
                 .replaceAll("http://", "")
-                .replaceAll("www.", "");
+                .replaceAll("www\\.", "");
     }
 }

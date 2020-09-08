@@ -3,6 +3,7 @@ package com.mockato.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Preconditions;
 
 import java.util.Objects;
 
@@ -13,6 +14,7 @@ public class DynamicResponse {
     @JsonCreator
     public DynamicResponse(@JsonProperty("script") String script) {
         this.script = script;
+        Preconditions.checkNotNull(script, "script cannot be null");
     }
 
     public String getScript() {

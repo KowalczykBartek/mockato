@@ -1,6 +1,5 @@
 package com.mockato.handlers;
 
-import com.mockato.exceptions.NotFoundException;
 import com.mockato.model.*;
 import com.mockato.service.MockService;
 import com.mockato.utils.CurlCommandParser;
@@ -79,11 +78,7 @@ public class GetMockDetailsAndRender implements Handler<RoutingContext> {
                         }
 
                     } else {
-                        if (result.cause() instanceof NotFoundException) {
-                            ResponseUtils.responseForNotFoundCase(event.response());
-                        } else {
-                            ResponseUtils.responseFromException(event.response(), result.cause());
-                        }
+                        ResponseUtils.responseFromException(event.response(), result.cause());
                     }
 
                 });
