@@ -81,19 +81,20 @@
 
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <div id="editor" th:text="${mock_dynamic_script}"></div>
+                    <pre><code class="javascript" th:text="${mock_dynamic_script}">
+                    </code></pre>
                 </div>
             </div>
             <div class="text-center border-bottom border-gray pb-2 mb-0"></div>
 
         </div>
 
-        <div th:if="${mock_type == 'STATIC'}" class="details-param-list">
+        <div th:if="${mock_type == 'STATIC'}">
 
-            <div class="col">
+            <div class="col" style="weight: 50%">
                 <div class="form-group">
                     <label for="statusCodeId">status code</label>
-                    <input class="form-control" id="statusCodeId" th:value="${mock_static_status}" disabled>
+                    <input class="form-control" id="statusCodeId" style="width: 15%;" th:value="${mock_static_status}" disabled>
                 </div>
             </div>
 
@@ -107,7 +108,8 @@
             <div class="col border-top">
                 <h7 class="border-bottom pb-2 mb-0">response body</h7>
                 <div class="input-group disabled">
-                    <textarea class="form-control" th:text="${mock_static_body}"> </textarea>
+                    <pre><code class="json" th:text="${mock_static_body}">
+                    </code></pre>
                 </div>
             </div>
         </div>
@@ -135,16 +137,17 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.11/ace.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/script.js"></script>
-<script>
-    $(document).ready(function() {
-        if ($('#editor').length){
-            var editor = ace.edit("editor");
-            editor.setTheme("ace/theme/monokai");
-            editor.session.setMode("ace/mode/javascript");
-            editor.setReadOnly(true);
-        }
 
-    });
+<!-- blah blah -->
+<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8"
+        src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/languages/go.min.js"></script>
+
+<script>
+    hljs.initHighlightingOnLoad();
 </script>
 </body>
 </html>
