@@ -37,7 +37,7 @@ public class Main {
         JavasScriptEngine javasScriptEngine = new JavasScriptEngine();
         MockRepository mockRepository = new MockRepository(configurationService);
         PathParserService pathParserService = new PathParserService();
-        MockExecutionService executor = new MockExecutionService(mockRepository, javasScriptEngine, pathParserService);
+        MockExecutionService executor = new MockExecutionService(vertx, mockRepository, javasScriptEngine, pathParserService);
         MockService mockService = new MockService(mockRepository, pathParserService);
 
         CurlCommandParser curlCommandParser = new CurlCommandParser(configurationService.getDomain());
