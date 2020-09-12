@@ -41,7 +41,11 @@ code {
 }
 
 #editor {
-   height: 300px;
+   height: 200px;
+}
+
+#responseBody {
+   height: 200px;
 }
 
 #pre-inside-alert {
@@ -67,7 +71,7 @@ code {
     padding: 1rem 1rem;
 }
 
-pre {
+.not-white-space-pre {
   background-color: rgb(255, 247, 229);
   white-space: pre-line;
 }

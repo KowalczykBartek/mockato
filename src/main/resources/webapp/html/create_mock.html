@@ -104,12 +104,12 @@
                 path parameters defined in path mock, can be accessed in script via params variable accessible in
                 context.
                 For example:
-                <pre class="pre-inside-alert">
+                <pre class="pre-inside-alert not-white-space-pre">
 var keyParam = params["key"]
 var valueParam = params["value"]
                 </pre>
                 with following path defined:
-                <pre class="pre-inside-alert">
+                <pre class="pre-inside-alert not-white-space-pre">
 /example/:key/:value
                 </pre>
 
@@ -140,10 +140,24 @@ var body = 'its ok';
                 constantly returned by your http mock.
             </div>
 
-            <div class="form-group">
-                <label for="responseBody">response body</label>
-                <textarea class="form-control" id="responseBody" rows="6"></textarea>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="responseBody">{
+    "id": 1,
+    "tags": [
+        "Bar",
+        "Eek"
+    ],
+    "stock": {
+        "warehouse": 300,
+        "retail": 20
+    }
+}
+                    </div>
+                </div>
             </div>
+            <div class="text-center border-bottom border-gray pb-2 mb-0"></div>
+
 
             <div class="form-group" style="width: 20%">
                 <label for="statusCode">status code</label>
@@ -204,8 +218,12 @@ var body = 'its ok';
     var nextHeader = 2;
 
     var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/monokai");
+    editor.setTheme("ace/theme/cloud");
     editor.session.setMode("ace/mode/javascript");
+
+    var responseBodyEditor = ace.edit("responseBody");
+    responseBodyEditor.setTheme("ace/theme/cloud");
+    responseBodyEditor.session.setMode("ace/mode/json");
 
     $(document).ready(function() {
         $("#static_mock").bind("click", function() {
@@ -262,7 +280,7 @@ var body = 'its ok';
                 var statusCode = $( "#statusCode" ).val();
                 staticResponse["statusCode"] = statusCode;
 
-                var responseBody = $( "#responseBody" ).val();
+                var responseBody = responseBodyEditor.getValue();
                 staticResponse["body"] = responseBody;
 
                 //iterate over headers
