@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -40,16 +40,17 @@
 <main role="main" class="container">
     <form>
         <div class="form-row">
+            <label for="path">mock http path</label>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3" th:text="${urlToMockato}"/>
+                </div>
+                <input type="text" class="form-control" id="path">
+            </div>
             <div class="col">
                 <div class="form-group">
                     <label for="mockId">id</label>
                     <input class="form-control" id="mockId">
-                </div>
-            </div>
-            <div class="col">
-                <div class="form-group">
-                    <label for="path">http path</label>
-                    <input class="form-control" id="path">
                 </div>
             </div>
             <div class="col">
@@ -65,28 +66,26 @@
                     </select>
                 </div>
             </div>
-        </div>
 
-        <div class="form-row border-bottom pb-2 mb-0">
             <div class="col">
-                <div class="form-group">
-                    <h7>mock type:</h7>
+                <div class="col">
+                    <p>mock type</p>
                 </div>
-            </div>
-            <div class="col">
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="mock_type" id="static_mock" value="static">
-                    <label class="form-check-label" for="static_mock">
-                        static
-                    </label>
+                <div class="col">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="mock_type" id="static_mock" value="static">
+                        <label class="form-check-label" for="static_mock">
+                            static
+                        </label>
+                    </div>
                 </div>
-            </div>
-            <div class="col">
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="mock_type" id="dynamic_mock" value="dynamic">
-                    <label class="form-check-label" for="dynamic_mock">
-                        dynamic
-                    </label>
+                <div class="col">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="mock_type" id="dynamic_mock" value="dynamic">
+                        <label class="form-check-label" for="dynamic_mock">
+                            dynamic
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -106,8 +105,14 @@
                 context.
                 For example:
                 <pre class="pre-inside-alert">
-var nameParam = params["name"]
-                        </pre>
+var keyParam = params["key"]
+var valueParam = params["value"]
+                </pre>
+                with following path defined:
+                <pre class="pre-inside-alert">
+/example/:key/:value
+                </pre>
+
                 To set status code, headers and body, follow sample script defined below.
             </div>
 
@@ -211,6 +216,13 @@ var body = 'its ok';
         $("#dynamic_mock").bind("click", function() {
             $("#dynamic-details").show();
             $("#static-details").hide();
+
+            //lets make super cool feature, if you click dynamic first time, I will put there example path
+            //with key and value as path params
+            var path = $( "#path" ).val();
+            if(!path) {
+                $( "#path" ).val("/example/:key/:value");
+            }
         });
 
         $("#create-mock").bind("click", function() {

@@ -1,6 +1,7 @@
 package com.mockato.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.common.base.Preconditions;
 
 import java.util.Map;
 
@@ -14,6 +15,9 @@ public class ResponseContainer {
         this.statusCode = statusCode;
         this.body = body;
         this.headers = headers;
+
+        Preconditions.checkNotNull(body, "body returned from script cannot be null");
+        Preconditions.checkNotNull(body, "headers returned from script cannot be null");
     }
 
     public int getStatusCode() {

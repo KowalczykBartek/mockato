@@ -64,10 +64,10 @@ public class Main {
         ThymeleafTemplateEngine engine = ThymeleafTemplateEngine.create(vertx);
         router.route("/static/*").handler(StaticHandler.create("webapp/static"));
 
-        RenderCreateMockPage createMock = new RenderCreateMockPage(mockService, engine);
+        RenderCreateMockPage createMock = new RenderCreateMockPage(configurationService, mockService, engine);
         router.route(HttpMethod.GET, "/newMock/:subdomain/create").handler(createMock);
 
-        GetMockDetailsAndRender getMockDetailsAndRender = new GetMockDetailsAndRender(mockService, engine, curlCommandParser);
+        GetMockDetailsAndRender getMockDetailsAndRender = new GetMockDetailsAndRender(configurationService, mockService, engine, curlCommandParser);
         router.route(HttpMethod.GET, "/:subdomain/:mockId").handler(getMockDetailsAndRender);
 
         RenderIndexPageHandler renderIndexPageHandler = new RenderIndexPageHandler(engine);

@@ -7,4 +7,7 @@ public class ScriptExecutionException extends RuntimeException {
     public ScriptExecutionException(Exception rootCause) {
         super(rootCause);
     }
+    public ScriptExecutionException(String msg) {
+        super(msg);
+    }
 }

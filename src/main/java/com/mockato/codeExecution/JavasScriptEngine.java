@@ -107,7 +107,7 @@ public class JavasScriptEngine {
                 Object value = output.get(key);
 
                 /*
-                 * that pretty bad xD fixme
+                 * todo that pretty bad xD
                  */
                 if (value instanceof Map) {
                     Map inner = new HashMap();
@@ -117,6 +117,7 @@ public class JavasScriptEngine {
                         Object valueI = ((Map) value).get(keyI);
                         inner.put(keyI, valueI);
                     }
+                    //fixme unchecked map operations
                     finOutput.put(key, inner);
                 } else {
                     finOutput.put(key, value);

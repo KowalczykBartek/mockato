@@ -105,9 +105,13 @@ public class MockExecutionService {
                 String body = Json.encode(response.get("body"));
                 int statusCode = (int) response.get("statusCode");
                 Map<String, String> headers = (Map<String, String>) response.get("headers");
-
                 ResponseContainer container = new ResponseContainer(statusCode, body, headers);
-                promise.complete(container);
+
+                if (isResponseValid(container)) {
+                    promise.complete(container);
+                } else {
+                    promise.fail(new ScriptExecutionException("Response returned from the script is not valid"));
+                }
 
             } catch (Exception ex) {
                 throw new ScriptExecutionException(ex);
@@ -122,6 +126,19 @@ public class MockExecutionService {
         });
 
         return responseContainerPromise.future();
+    }
+
+    /*
+     * Before returning it to the user, lets verify we can return it safely.
+     */
+    private boolean isResponseValid(ResponseContainer responseContainer) {
+        boolean isAtLeastOneNullHeader = responseContainer.getHeaders().entrySet().stream() //
+                .anyMatch(header -> header.getValue() == null || header.getKey() == null);
+
+        //according to https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+        boolean isStatusValid = responseContainer.getStatusCode() >= 100 && responseContainer.getStatusCode() < 600;
+
+        return !isAtLeastOneNullHeader && isStatusValid;
     }
 
 }

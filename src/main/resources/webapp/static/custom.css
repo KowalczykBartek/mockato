@@ -46,7 +46,7 @@ code {
 
 #pre-inside-alert {
     margin-bottom: 0;
-    margin-top: 10px;
+    margin-top: 0px;
 }
 
 .margin-bottom {
@@ -65,4 +65,9 @@ code {
 
 .custom-jumbotron {
     padding: 1rem 1rem;
+}
+
+pre {
+  background-color: rgb(255, 247, 229);
+  white-space: pre-line;
 }

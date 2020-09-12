@@ -1,6 +1,7 @@
 package com.mockato.handlers;
 
 import com.mockato.model.*;
+import com.mockato.service.ConfigurationService;
 import com.mockato.service.MockService;
 import com.mockato.utils.CurlCommandParser;
 import io.vertx.core.Handler;
@@ -19,11 +20,13 @@ public class GetMockDetailsAndRender implements Handler<RoutingContext> {
     private final MockService mockService;
     private final ThymeleafTemplateEngine engine;
     private final CurlCommandParser curlCommandParser;
+    private final String domain;
 
-    public GetMockDetailsAndRender(MockService mockService, ThymeleafTemplateEngine engine, CurlCommandParser curlCommandParser) {
+    public GetMockDetailsAndRender(ConfigurationService configurationService, MockService mockService, ThymeleafTemplateEngine engine, CurlCommandParser curlCommandParser) {
         this.mockService = mockService;
         this.engine = engine;
         this.curlCommandParser = curlCommandParser;
+        this.domain = configurationService.getDomain();
     }
 
     @Override
@@ -51,6 +54,8 @@ public class GetMockDetailsAndRender implements Handler<RoutingContext> {
 
                             MockType type = definition.getResponseDefinition().getType();
                             map.put("mock_type", type);
+
+                            map.put("urlToMockato", subdomain + domain);
 
                             if (type.equals(MockType.DYNAMIC)) {
                                 DynamicResponse dynamicResponse = definition.getResponseDefinition().getDynamicResponse();

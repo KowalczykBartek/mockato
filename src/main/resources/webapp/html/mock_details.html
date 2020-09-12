@@ -50,18 +50,22 @@
 
 
         <div class="form-row">
+
+            <label for="path">mock http path</label>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3" th:text="${urlToMockato}"/>
+                </div>
+                <input type="text" class="form-control" id="path"  th:value="${mock_path}" disabled>
+            </div>
+
             <div class="col">
                 <div class="form-group">
                     <label for="mockId">id</label>
                     <input type="email" class="form-control" id="mockId" th:value="${mock_id}" disabled>
                 </div>
             </div>
-            <div class="col">
-                <div class="form-group">
-                    <label for="path">http path</label>
-                    <input type="email" class="form-control" id="path" th:value="${mock_path}" disabled>
-                </div>
-            </div>
+
             <div class="col">
                 <div class="form-group">
                     <label for="method">http method</label>
