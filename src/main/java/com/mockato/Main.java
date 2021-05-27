@@ -1,6 +1,5 @@
 package com.mockato;
 
-import com.mockato.codeExecution.JavasScriptEngine;
 import com.mockato.handlers.*;
 import com.mockato.repo.MockRepository;
 import com.mockato.service.ConfigurationService;
@@ -34,10 +33,9 @@ public class Main {
         Vertx vertx = Vertx.vertx();
         HttpServer server = vertx.createHttpServer();
 
-        JavasScriptEngine javasScriptEngine = new JavasScriptEngine();
         MockRepository mockRepository = new MockRepository(configurationService);
         PathParserService pathParserService = new PathParserService();
-        MockExecutionService executor = new MockExecutionService(vertx, mockRepository, javasScriptEngine, pathParserService);
+        MockExecutionService executor = new MockExecutionService(vertx, mockRepository, pathParserService);
         MockService mockService = new MockService(mockRepository, pathParserService);
 
         CurlCommandParser curlCommandParser = new CurlCommandParser(configurationService.getDomain());

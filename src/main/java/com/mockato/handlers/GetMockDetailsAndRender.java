@@ -57,15 +57,10 @@ public class GetMockDetailsAndRender implements Handler<RoutingContext> {
 
                             map.put("urlToMockato", subdomain + domain);
 
-                            if (type.equals(MockType.DYNAMIC)) {
-                                DynamicResponse dynamicResponse = definition.getResponseDefinition().getDynamicResponse();
-                                map.put("mock_dynamic_script", dynamicResponse.getScript());
-                            } else {
-                                StaticResponse staticResponse = definition.getResponseDefinition().getStaticResponse();
-                                map.put("mock_static_headers", staticResponse.getHeaders());
-                                map.put("mock_static_status", staticResponse.getStatusCode());
-                                map.put("mock_static_body", staticResponse.getBody());
-                            }
+                            StaticResponse staticResponse = definition.getResponseDefinition().getStaticResponse();
+                            map.put("mock_static_headers", staticResponse.getHeaders());
+                            map.put("mock_static_status", staticResponse.getStatusCode());
+                            map.put("mock_static_body", staticResponse.getBody());
 
                             String curlForUser = curlCommandParser.generateCurlCommandForFrontend(definition, subdomain);
                             map.put("curl_command", curlForUser);

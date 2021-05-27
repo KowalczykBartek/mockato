@@ -1,15 +1,12 @@
 [![](https://img.shields.io/badge/unicorn-approved-ff69b4.svg)](https://www.youtube.com/watch?v=9auOCbH5Ns4)
 
 ## why ?
-If you need to create some HTTP mock dynamically (and easily), this is what mockato allows you to do.
+If you need to create some HTTP mock easily, this is what mockato allows you to do.
 
 ## mockato.ovh
 you can access mockato here http://mockato.ovh/ (http only)
 
 ## run locally
-You need GraalVM (https://github.com/oracle/graal).
-Embedded Graal is responsible for execution javascript code (not safe too much, but easy to implement :)).
-
 to build.
 ```
 ./gradlew fatjar

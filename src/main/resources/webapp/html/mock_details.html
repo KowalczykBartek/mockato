@@ -80,41 +80,25 @@
             </ul>
         </div>
 
-        <div th:if="${mock_type == 'DYNAMIC'}">
-            <h7 class="border-bottom pb-2 mb-0">dynamic response definition</h7>
-
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <pre><code class="javascript" th:text="${mock_dynamic_script}">
-                    </code></pre>
-                </div>
+        <div class="col" style="weight: 50%">
+            <div class="form-group">
+                <label for="statusCodeId">status code</label>
+                <input class="form-control" id="statusCodeId" style="width: 15%;" th:value="${mock_static_status}" disabled>
             </div>
-            <div class="text-center border-bottom border-gray pb-2 mb-0"></div>
-
         </div>
 
-        <div th:if="${mock_type == 'STATIC'}">
+        <div th:if="${mock_static_headers.size > 0}" class="details-param-list">
+            <h7 class="border-bottom border-gray pb-2 mb-0">response headers:</h7>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item" th:each="entry : ${mock_static_headers}" th:text="${entry}"/>
+            </ul>
+        </div>
 
-            <div class="col" style="weight: 50%">
-                <div class="form-group">
-                    <label for="statusCodeId">status code</label>
-                    <input class="form-control" id="statusCodeId" style="width: 15%;" th:value="${mock_static_status}" disabled>
-                </div>
-            </div>
-
-            <div th:if="${mock_static_headers.size > 0}" class="details-param-list">
-                <h7 class="border-bottom border-gray pb-2 mb-0">response headers:</h7>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item" th:each="entry : ${mock_static_headers}" th:text="${entry}"/>
-                </ul>
-            </div>
-
-            <div class="col border-top">
-                <h7 class="border-bottom pb-2 mb-0">response body</h7>
-                <div class="input-group disabled">
-                    <pre><code class="json" th:text="${mock_static_body}">
-                    </code></pre>
-                </div>
+        <div class="col border-top">
+            <h7 class="border-bottom pb-2 mb-0">response body</h7>
+            <div class="input-group">
+                <pre style="width: 100%"><code class="json" th:text="${mock_static_body}">
+                </code></pre>
             </div>
         </div>
 

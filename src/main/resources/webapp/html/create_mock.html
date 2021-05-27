@@ -38,6 +38,22 @@
 </nav>
 
 <main role="main" class="container">
+
+    <div class="alert alert-info" role="alert">
+        You can create parametrized endpoint's path, that will allow you to be as close as your real endpoint.
+        For example:
+        <pre class="pre-inside-alert not-white-space-pre">
+/example/:key/:value
+        </pre>
+        will handle all following requests
+        <pre class="pre-inside-alert not-white-space-pre">
+/example/aaaa/bbbb
+/example/11111/2222
+/example/xoxoxo/xoxoxoxo
+        </pre>
+    </pre>
+    </div>
+
     <form>
         <div class="form-row">
             <label for="path">mock http path</label>
@@ -66,73 +82,9 @@
                     </select>
                 </div>
             </div>
-
-            <div class="col">
-                <div class="col">
-                    <p>mock type</p>
-                </div>
-                <div class="col">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="mock_type" id="static_mock" value="static">
-                        <label class="form-check-label" for="static_mock">
-                            static
-                        </label>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="mock_type" id="dynamic_mock" value="dynamic">
-                        <label class="form-check-label" for="dynamic_mock">
-                            dynamic
-                        </label>
-                    </div>
-                </div>
-            </div>
         </div>
 
-
-        <div id="dynamic-details" style="display: none;">
-
-            <h7 class="border-bottom pb-2 mb-0">dynamic response definition</h7>
-
-            <div class="alert alert-warning" role="alert">
-                <p style="float: left;"><img src="/static/drudgesiren.gif" height="50px" width="50px"/></p>
-                <p>pls, don't make your script bigger than 500 statements.</p>
-            </div>
-
-            <div class="alert alert-info" role="alert">
-                path parameters defined in path mock, can be accessed in script via params variable accessible in
-                context.
-                For example:
-                <pre class="pre-inside-alert not-white-space-pre">
-var keyParam = params["key"]
-var valueParam = params["value"]
-                </pre>
-                with following path defined:
-                <pre class="pre-inside-alert not-white-space-pre">
-/example/:key/:value
-                </pre>
-
-                To set status code, headers and body, follow sample script defined below.
-            </div>
-
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <div id="editor">var headers = {
-    header1: params["key"],
-    header2: params["value"]
-};
-var body = 'its ok';
-//return statement
-({ statusCode : 200, body : params, headers : headers })
-                    </div>
-                </div>
-            </div>
-            <div class="text-center border-bottom border-gray pb-2 mb-0"></div>
-        </div>
-
-
-        <div id="static-details" style="display: none;">
+        <div id="static-details">
             <h7 class="border-bottom pb-2 mb-0">static response definition</h7>
 
             <div class="alert alert-info" role="alert">
@@ -217,32 +169,11 @@ var body = 'its ok';
     //don't try to understand that.
     var nextHeader = 2;
 
-    var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/cloud");
-    editor.session.setMode("ace/mode/javascript");
-
     var responseBodyEditor = ace.edit("responseBody");
     responseBodyEditor.setTheme("ace/theme/cloud");
     responseBodyEditor.session.setMode("ace/mode/json");
 
     $(document).ready(function() {
-        $("#static_mock").bind("click", function() {
-            $("#dynamic-details").hide();
-            $("#static-details").show();
-        });
-
-        $("#dynamic_mock").bind("click", function() {
-            $("#dynamic-details").show();
-            $("#static-details").hide();
-
-            //lets make super cool feature, if you click dynamic first time, I will put there example path
-            //with key and value as path params
-            var path = $( "#path" ).val();
-            if(!path) {
-                $( "#path" ).val("/example/:key/:value");
-            }
-        });
-
         $("#create-mock").bind("click", function() {
 
             var finalRequest = {};
@@ -263,40 +194,27 @@ var body = 'its ok';
 
             console.log(mockType);
 
-            if(mockType == 'dynamic') {
-                responseDefinition["type"] = "DYNAMIC";
-                var dynamicResponse = {}
-                var scriptCode = editor.getValue();
+            responseDefinition["type"] = "STATIC";
+            var staticResponse = {}
 
-                dynamicResponse["script"] = scriptCode;
+            var statusCode = $( "#statusCode" ).val();
+            staticResponse["statusCode"] = statusCode;
 
-                responseDefinition["dynamicResponse"] = dynamicResponse;
+            var responseBody = responseBodyEditor.getValue();
+            staticResponse["body"] = responseBody;
 
-                console.log(finalRequest);
-            } else {
-                responseDefinition["type"] = "STATIC";
-                var staticResponse = {}
+            //iterate over headers
+            var headers = {};
 
-                var statusCode = $( "#statusCode" ).val();
-                staticResponse["statusCode"] = statusCode;
+            $('#headers-container').children().each( (index, element) => {
+                var key = $(element).find("input[name='header-key']").val();
+                var value = $(element).find("input[name='header-value']").val();
+                headers[key] = value;
+             });
 
-                var responseBody = responseBodyEditor.getValue();
-                staticResponse["body"] = responseBody;
+            staticResponse["headers"] = headers;
 
-                //iterate over headers
-                var headers = {};
-
-                $('#headers-container').children().each( (index, element) => {
-                    var key = $(element).find("input[name='header-key']").val();
-                    var value = $(element).find("input[name='header-value']").val();
-                    headers[key] = value;
-                 });
-
-                staticResponse["headers"] = headers;
-
-                responseDefinition["staticResponse"] = staticResponse;
-            }
-
+            responseDefinition["staticResponse"] = staticResponse;
 
             $.ajax({
                 type: 'POST',

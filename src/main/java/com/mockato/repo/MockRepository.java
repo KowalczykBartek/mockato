@@ -114,7 +114,7 @@ public class MockRepository {
      * @return
      */
     public Future<Void> createMock(String subdomain, String definitionId, JsonObject jsonObject) {
-        Promise promise = Promise.promise();
+        Promise<Void> promise = Promise.promise();
         client.preparedQuery("INSERT INTO mocks(subdomain, mock_id, definition) VALUES ($1, $2, $3)")
                 .execute(Tuple.of(subdomain, definitionId, jsonObject), ar -> {
                     if (ar.succeeded()) {
@@ -136,7 +136,7 @@ public class MockRepository {
      * @return
      */
     public Future<List<MatchPattern>> getAllMockedPathsForSubdomain(String subdomain, String method) {
-        Promise promise = Promise.promise();
+        Promise<List<MatchPattern>> promise = Promise.promise();
         client.preparedQuery("SELECT mock_id, definition->>'path', definition->>'pattern', definition->>'groups' FROM mocks WHERE subdomain=$1 AND definition->>'method' = $2;")
                 .execute(Tuple.of(subdomain, method), ar -> {
                     if (ar.succeeded()) {

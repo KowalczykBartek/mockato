@@ -49,8 +49,11 @@ public class DetectSubdomainRequestHandler implements Handler<RoutingContext> {
             String subdomain = plainHost.split(domain)[0];
             LOGGER.info("Executing mock request against subdomain {}", host);
 
-            //here, we are in case when someone calls us from subdomain
-            executor.respondToRequestWithMock(subdomain, event.request().method(), event.request().path())
+            /*
+             * here, we are in case when someone calls us from subdomain, that means, this is mock
+             * to be handled.
+             */
+            executor.respondToRequestWithMock(/*extract as object*/subdomain, event.request().method(), event.request().path())
                     .onComplete(res -> {
                         if (res.succeeded()) {
                             ResponseContainer responseContainer = res.result();
